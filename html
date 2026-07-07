@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Esther</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'geist': ['Geist', 'sans-serif'],
+                        'serif-display': ['Instrument Serif', 'serif'],
+                        'jakarta': ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Geist', sans-serif; background: #Fdfcf8; }
+        .font-serif-display { font-family: 'Instrument Serif', serif; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4d4d4; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+        .delay-600 { animation-delay: 600ms; }
+        .delay-700 { animation-delay: 700ms; }
+        .delay-800 { animation-delay: 800ms; }
+
+        @keyframes dropIn {
+            0% { opacity: 0; transform: translateY(-60px) rotate(var(--rot)); }
+            60% { transform: translateY(8px) rotate(var(--rot)); }
+            80% { transform: translateY(-4px) rotate(var(--rot)); }
+            100% { opacity: 1; transform: translateY(0) rotate(var(--rot)); }
+        }
+        .animate-drop-in {
+            opacity: 0;
+            animation: dropIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .photo-card {
+            --rot: 0deg;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .photo-card:hover {
+            z-index: 50 !important;
+            transform: rotate(0deg) scale(1.08) translateY(-12px) !important;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.02);
+        }
+
+        /* === INFINITE SCROLL SLIDER === */
+        @keyframes scroll-right {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes scroll-left {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+        .scroll-row-1 .infinite-scroll-inner {
+            animation: scroll-right 35s linear infinite;
+        }
+        .scroll-row-2 .infinite-scroll-inner {
+            animation: scroll-left 40s linear infinite;
+        }
+        .scroll-mask {
+            mask: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+            -webkit-mask: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+        }
+        .slider-image-item {
+            transition: transform 0.4s ease, filter 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+        .slider-image-item:hover {
+            transform: scale(1.08) translateY(-4px);
+            filter: brightness(1.1) saturate(1.1);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+        }
+        .slider-section {
+            background: #1c1917;
+            position: relative;
+            overflow: hidden;
+        }
+        .slider-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 30% 50%, rgba(251, 191, 36, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(244, 63, 94, 0.06) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* === END SLIDER === */
+
+        .clothesline { position: relative; }
+        .clothesline::before {
+            content: '';
+            position: absolute;
+            top: -18px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #a8a29e;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .clothesline::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 1px;
+        }
+
+        .pin { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); width: 20px; height: 32px; z-index: 10; }
+        .pin::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: #b45309;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .pin::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 18px;
+            background: linear-gradient(to bottom, #b45309, #92400e);
+            border-radius: 1px;
+            box-shadow: 1px 0 2px rgba(0,0,0,0.15);
+        }
+
+        .tape {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) rotate(var(--tape-rot, 0deg));
+            width: 60px;
+            height: 22px;
+            background: rgba(251, 191, 36, 0.45);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            z-index: 10;
+            backdrop-filter: blur(1px);
+        }
+
+        .polaroid {
+            background: white;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        @keyframes floatHeart {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            20% { opacity: 0.7; }
+            100% { opacity: 0; transform: translateY(-120px) scale(1.2); }
+        }
+        .floating-heart { animation: floatHeart 3s ease-out forwards; }
+
+        .bg-texture {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(211, 47, 47, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.03) 0%, transparent 50%);
+        }
+
+        .wall-texture {
+            background-color: #Fdfcf8;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a8a29e' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .nail {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle at 35% 35%, #d6d3d1, #78716c);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.4);
+            z-index: 10;
+        }
+        .string {
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: #a8a29e;
+            z-index: 9;
+        }
+
+        .pushpin { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 10; }
+        .pushpin::before {
+            content: '';
+            display: block;
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle at 40% 35%, #f87171, #dc2626);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.4);
+        }
+        .pushpin::after {
+            content: '';
+            display: block;
+            width: 3px;
+            height: 6px;
+            background: #991b1b;
+            margin: -2px auto 0;
+            border-radius: 0 0 1px 1px;
+        }
+
+        .clothesline-2 { position: relative; }
+        .clothesline-2::before {
+            content: '';
+            position: absolute;
+            top: -18px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #a8a29e;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .clothesline-2::after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 1px;
+        }
+
+        .photo-card .photo-inner { overflow: hidden; }
+        .photo-card .photo-inner img { transition: transform 0.7s ease; }
+        .photo-card:hover .photo-inner img { transform: scale(1.05); }
+
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.active { opacity: 1; pointer-events: all; }
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 4px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .lightbox.active img { transform: scale(1); }
+
+        .spotify-glow { position: relative; }
+        .spotify-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #1DB954, #191414, #1DB954);
+            background-size: 300% 300%;
+            animation: spotifyGlow 4s ease-in-out infinite;
+            z-index: -1;
+            opacity: 0.5;
+            filter: blur(8px);
+        }
+        @keyframes spotifyGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Transition from light to dark slider section */
+        .section-fade-to-dark {
+            position: relative;
+        }
+        .section-fade-to-dark::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to bottom, #Fdfcf8, #1c1917);
+            pointer-events: none;
+            z-index: 5;
+        }
+        .section-fade-to-light {
+            position: relative;
+        }
+        .section-fade-to-light::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to bottom, #1c1917, #Fdfcf8);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Pause on hover */
+        .scroll-row-1:hover .infinite-scroll-inner,
+        .scroll-row-2:hover .infinite-scroll-inner {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="bg-texture wall-texture min-h-screen">
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-10">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <button onclick="event.stopPropagation(); navigateLightbox(-1)" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-2 z-10">
+            <i data-lucide="chevron-left" class="w-10 h-10"></i>
+        </button>
+        <button onclick="event.stopPropagation(); navigateLightbox(1)" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-2 z-10">
+            <i data-lucide="chevron-right" class="w-10 h-10"></i>
+        </button>
+        <div class="text-center">
+            <img id="lightbox-img" src="" alt="Esther" onclick="event.stopPropagation()">
+            <p id="lightbox-caption" class="text-white/50 text-sm mt-4 font-light"></p>
+        </div>
+    </div>
+
+    <!-- Background blurs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-amber-200/20 blur-[120px]"></div>
+        <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-rose-200/15 blur-[120px]"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-purple-200/10 blur-[100px]"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-[#Fdfcf8]/80 backdrop-blur-md border-b border-stone-200/50">
+        <div class="max-w-6xl mx-auto px-6 h-full flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 group">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-white text-xs font-medium shadow-sm">
+                    E
+                </div>
+                <span class="font-serif-display text-xl text-stone-900">Esther</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#reel" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="film" class="w-3.5 h-3.5"></i>
+                    Reel
+                </a>
+                <a href="#gallery" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Gallery</a>
+                <a href="#vibe" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="music" class="w-3.5 h-3.5"></i>
+                    Vibe
+                </a>
+                <a href="#about" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">About</a>
+                <button onclick="let hearts = document.querySelectorAll('.floating-heart-container'); hearts.forEach(c => c.classList.remove('invisible')); setTimeout(() => hearts.forEach(c => c.classList.add('invisible')), 3500);" class="flex items-center gap-2 px-4 py-2 bg-stone-900 text-[#Fdfcf8] text-xs font-medium uppercase tracking-widest rounded-full hover:bg-stone-700 transition-all">
+                    <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                    Send Love
+                </button>
+            </div>
+            <button class="md:hidden text-stone-600" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-[#Fdfcf8]/95 backdrop-blur-md border-b border-stone-200/50 px-6 py-4 space-y-3">
+            <a href="#reel" class="block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Reel</a>
+            <a href="#gallery" class="block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Gallery</a>
+            <a href="#vibe" class="block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Vibe</a>
+            <a href="#about" class="block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">About</a>
+        </div>
+    </nav>
+
+    <!-- Floating hearts containers -->
+    <div class="floating-heart-container invisible fixed top-1/4 left-[15%] z-40 pointer-events-none">
+        <div class="floating-heart text-rose-400 text-2xl" style="animation-delay: 0s;">♥</div>
+    </div>
+    <div class="floating-heart-container invisible fixed top-1/3 left-[40%] z-40 pointer-events-none">
+        <div class="floating-heart text-amber-400 text-xl" style="animation-delay: 0.3s;">♥</div>
+    </div>
+    <div class="floating-heart-container invisible fixed top-1/4 right-[20%] z-40 pointer-events-none">
+        <div class="floating-heart text-rose-300 text-3xl" style="animation-delay: 0.6s;">♥</div>
+    </div>
+    <div class="floating-heart-container invisible fixed top-1/2 left-[60%] z-40 pointer-events-none">
+        <div class="floating-heart text-pink-400 text-lg" style="animation-delay: 0.9s;">♥</div>
+    </div>
+    <div class="floating-heart-container invisible fixed top-2/5 left-[25%] z-40 pointer-events-none">
+        <div class="floating-heart text-red-300 text-2xl" style="animation-delay: 1.2s;">♥</div>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="relative pt-32 pb-16 md:pt-44 md:pb-24 px-6 text-center overflow-hidden section-fade-to-dark">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="animate-fade-in-up">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-stone-200/60 text-xs font-medium uppercase tracking-widest text-stone-500 mb-8 shadow-sm">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                    A Photo Wall
+                </span>
+            </div>
+            <h1 class="font-serif-display text-5xl md:text-7xl lg:text-8xl font-normal leading-[0.9] text-stone-900 animate-fade-in-up delay-200">
+                For <span class="italic text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-amber-500 to-rose-400">Esther</span>
+            </h1>
+            <p class="mt-8 text-base md:text-lg font-light leading-relaxed text-stone-500 max-w-xl mx-auto animate-fade-in-up delay-400">
+                Every photo tells a story, every moment a memory worth keeping. 
+                This little corner of the internet is yours.
+            </p>
+            <div class="mt-10 flex flex-wrap items-center justify-center gap-4 animate-fade-in-up delay-500">
+                <a href="#reel" class="group flex items-center gap-2 px-6 py-3 bg-stone-900 text-[#Fdfcf8] text-xs font-medium uppercase tracking-widest rounded-full hover:bg-stone-700 transition-all hover:shadow-lg hover:shadow-stone-900/10">
+                    <i data-lucide="film" class="w-3.5 h-3.5"></i>
+                    Memory Reel
+                </a>
+                <a href="#gallery" class="group flex items-center gap-2 px-6 py-3 bg-white/80 border border-stone-200/60 text-stone-600 text-xs font-medium uppercase tracking-widest rounded-full hover:bg-white hover:border-stone-300 transition-all shadow-sm">
+                    View Photos
+                    <i data-lucide="arrow-down" class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform"></i>
+                </a>
+            </div>
+            <div class="absolute top-20 left-10 md:left-20 text-amber-400/30 animate-fade-in-up delay-600">
+                <i data-lucide="heart" class="w-6 h-6"></i>
+            </div>
+            <div class="absolute top-32 right-10 md:right-24 text-rose-400/20 animate-fade-in-up delay-700">
+                <i data-lucide="star" class="w-5 h-5"></i>
+            </div>
+            <div class="absolute bottom-10 left-1/4 text-purple-400/20 animate-fade-in-up delay-800">
+                <i data-lucide="flower-2" class="w-5 h-5"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== INFINITE SCROLL SLIDER (Memory Reel) ==================== -->
+    <section id="reel" class="slider-section py-16 md:py-24 relative">
+        <!-- Top fade from light -->
+        <div class="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-[#Fdfcf8] to-transparent z-10 pointer-events-none"></div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4">
+            <!-- Section header -->
+            <div class="text-center mb-12">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium uppercase tracking-widest text-stone-400 mb-6">
+                    <i data-lucide="film" class="w-3.5 h-3.5 text-amber-400"></i>
+                    Memory Reel
+                </span>
+                <h2 class="font-serif-display text-3xl md:text-5xl text-white leading-tight">
+                    Moments on <span class="italic text-amber-400/80">loop</span>
+                </h2>
+                <p class="mt-3 text-sm text-stone-500 font-light">Hover to pause · Click to enlarge</p>
+            </div>
+        </div>
+
+        <!-- Scroll Row 1 — Right -->
+        <div class="scroll-row-1 relative z-10 mb-6">
+            <div class="scroll-mask">
+                <div class="infinite-scroll-inner flex gap-5 w-max">
+                    <!-- Original 10 photos -->
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(0)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(1)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(2)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(3)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(4)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(5)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(6)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(7)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(8)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(9)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <!-- Duplicated for seamless loop -->
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(0)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(1)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(2)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(3)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(4)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(5)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(6)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(7)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(8)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(9)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Row 2 — Left (offset images for visual variety) -->
+        <div class="scroll-row-2 relative z-10 mt-6">
+            <div class="scroll-mask">
+                <div class="infinite-scroll-inner flex gap-5 w-max">
+                    <!-- Shuffled order for variety: 5,8,1,9,3,7,0,6,2,4 -->
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(4)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(8)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(1)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(9)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(3)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(7)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(0)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(6)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(2)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(5)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <!-- Duplicated -->
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(4)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(8)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(1)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(9)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(3)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(7)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(0)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(6)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(2)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(5)">
+                        <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther" class="w-full h-full object-cover" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom fade to light -->
+        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#Fdfcf8] to-transparent z-10 pointer-events-none"></div>
+    </section>
+
+    <!-- ==================== HUNG PHOTOS GALLERY ==================== -->
+    <section id="gallery" class="relative px-6 pb-12 pt-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-6 animate-fade-in-up">
+                <span class="text-xs font-medium uppercase tracking-widest text-stone-400">~ Memories Hung With Care ~</span>
+            </div>
+
+            <!-- Row 1 — Clothesline -->
+            <div class="clothesline relative pt-8 pb-6 px-4">
+                <div class="flex flex-wrap justify-center gap-8 md:gap-12">
+                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: -2.5deg; animation-delay: 0.3s; transform: rotate(-2.5deg);" onclick="openLightbox(0)">
+                        <div class="pin"></div>
+                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 220px; height: 280px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther selfie" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">selfie days ✨</p>
+                    </div>
+                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: 1.8deg; animation-delay: 0.6s; transform: rotate(1.8deg);" onclick="openLightbox(1)">
+                        <div class="pin"></div>
+                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 200px; height: 270px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther in white" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">natural beauty 🤍</p>
+                    </div>
+                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: -1.2deg; animation-delay: 0.9s; transform: rotate(-1.2deg);" onclick="openLightbox(2)">
+                        <div class="pin"></div>
+                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 230px; height: 260px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther with cap" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">silly moments 🇺🇸</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center py-6">
+                <div class="flex items-center gap-3 text-stone-300"><div class="w-8 h-px bg-stone-300"></div><i data-lucide="heart" class="w-3 h-3"></i><div class="w-8 h-px bg-stone-300"></div></div>
+            </div>
+
+            <!-- Row 2 — Wall pinned -->
+            <div class="relative pt-8 pb-6 px-4">
+                <div class="flex flex-wrap justify-center gap-8 md:gap-12">
+                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: 2.2deg; animation-delay: 0.4s; transform: rotate(2.2deg);" onclick="openLightbox(3)">
+                        <div class="nail"></div><div class="string"></div>
+                        <div class="photo-inner rounded-lg overflow-hidden border-4 border-white shadow-lg" style="width: 210px; height: 290px; margin-top: 18px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther hair detail" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">those locks 💫</p>
+                    </div>
+                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: -3deg; animation-delay: 0.7s; transform: rotate(-3deg);" onclick="openLightbox(4)">
+                        <div class="tape" style="--tape-rot: -8deg;"></div>
+                        <div class="photo-inner rounded-lg overflow-hidden shadow-lg" style="width: 230px; height: 280px; margin-top: 6px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther playful" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">playful spirit 😛</p>
+                    </div>
+                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: 1.5deg; animation-delay: 1s; transform: rotate(1.5deg);" onclick="openLightbox(5)">
+                        <div class="tape" style="--tape-rot: 5deg; background: rgba(244, 114, 182, 0.35); border-color: rgba(244, 114, 182, 0.2);"></div>
+                        <div class="photo-inner rounded-lg overflow-hidden shadow-lg" style="width: 220px; height: 290px; margin-top: 6px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther elegant" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">so elegant 🌹</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center py-6">
+                <div class="flex items-center gap-3 text-stone-300"><div class="w-8 h-px bg-stone-300"></div><i data-lucide="music" class="w-3 h-3"></i><div class="w-8 h-px bg-stone-300"></div></div>
+            </div>
+
+            <!-- Row 3 — Clothesline 2 -->
+            <div class="clothesline-2 relative pt-8 pb-6 px-4">
+                <div class="flex flex-wrap justify-center gap-8 md:gap-12">
+                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: 1deg; animation-delay: 0.5s; transform: rotate(1deg);" onclick="openLightbox(6)">
+                        <div class="pin"></div>
+                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 215px; height: 285px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther blue gold" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">regal vibes 💙</p>
+                    </div>
+                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: -2deg; animation-delay: 0.8s; transform: rotate(-2deg);" onclick="openLightbox(7)">
+                        <div class="pin"></div>
+                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 225px; height: 275px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther sport" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">sporty & cute 😜</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center py-6">
+                <div class="flex items-center gap-3 text-stone-300"><div class="w-8 h-px bg-stone-300"></div><i data-lucide="star" class="w-3 h-3"></i><div class="w-8 h-px bg-stone-300"></div></div>
+            </div>
+
+            <!-- Row 4 — Pushpins -->
+            <div class="relative pt-8 pb-6 px-4">
+                <div class="flex flex-wrap justify-center gap-8 md:gap-12">
+                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: -1.8deg; animation-delay: 0.6s; transform: rotate(-1.8deg);" onclick="openLightbox(8)">
+                        <div class="pushpin"></div>
+                        <div class="photo-inner rounded-lg overflow-hidden border-[3px] border-white shadow-lg" style="width: 235px; height: 290px; margin-top: 8px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther outdoor" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">outdoor chill 🌿</p>
+                    </div>
+                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: 2.5deg; animation-delay: 0.9s; transform: rotate(2.5deg);" onclick="openLightbox(9)">
+                        <div class="pushpin"></div>
+                        <div class="photo-inner rounded-lg overflow-hidden border-[3px] border-white shadow-lg" style="width: 220px; height: 280px; margin-top: 8px;">
+                            <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther grey jacket" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">mysterious ✌️</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SPOTIFY / VIBE ==================== -->
+    <section id="vibe" class="relative px-6 py-20 md:py-28">
+        <div class="max-w-2xl mx-auto">
+            <div class="text-center mb-10 animate-fade-in-up">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-stone-200/60 text-xs font-medium uppercase tracking-widest text-stone-500 mb-6 shadow-sm">
+                    <i data-lucide="music-2" class="w-3.5 h-3.5 text-green-500"></i>
+                    The Vibe
+                </span>
+                <h2 class="font-serif-display text-3xl md:text-5xl text-stone-900 leading-tight">
+                    A song that <span class="italic">fits</span>
+                </h2>
+                <p class="mt-4 text-sm text-stone-400 font-light">Hit play and let the photos sink in</p>
+            </div>
+            <div class="animate-fade-in-up delay-200">
+                <div class="spotify-glow rounded-2xl">
+                    <div class="bg-white rounded-2xl p-4 md:p-6 shadow-lg">
+                        <!-- UPDATED SPOTIFY EMBED URL -->
+                        <iframe data-testid="embed-iframe" style="border-radius:12px" 
+                                src="https://open.spotify.com/embed/track/5bgORF1neXPXVCKkoLEdNO?utm_source=generator&si=11493c01e4a04cfa" 
+                                width="100%" height="352" frameBorder="0" 
+                                allowfullscreen="" 
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                                loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center gap-6 mt-6 text-stone-300/50">
+                <span class="text-lg">♪</span><span class="text-sm mt-1">♫</span><span class="text-lg">♪</span><span class="text-sm mt-1">♫</span><span class="text-lg">♪</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ABOUT ==================== -->
+    <section id="about" class="relative px-6 py-20 md:py-28">
+        <div class="max-w-2xl mx-auto text-center animate-fade-in-up">
+            <div class="bg-white/60 backdrop-blur-sm border border-stone-200/50 rounded-2xl p-8 md:p-12 shadow-sm relative overflow-hidden">
+                <div class="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-amber-300/50 rounded-tl-md"></div>
+                <div class="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-amber-300/50 rounded-tr-md"></div>
+                <div class="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-amber-300/50 rounded-bl-md"></div>
+                <div class="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-amber-300/50 rounded-br-md"></div>
+                <i data-lucide="quote" class="w-8 h-8 text-amber-400/40 mx-auto mb-4"></i>
+                <p class="font-serif-display text-xl md:text-2xl text-stone-700 leading-relaxed italic">
+                    Some people light up a room just by being in it. 
+                    Esther, you're one of those people — 
+                    and these photos are proof.
+                </p>
+                <div class="mt-6 flex items-center justify-center gap-2 text-stone-400">
+                    <div class="w-8 h-px bg-stone-300"></div>
+                    <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i>
+                    <div class="w-8 h-px bg-stone-300"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative border-t border-stone-200/50 px-6 py-12">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-white text-[10px] font-medium">E</div>
+                <span class="font-serif-display text-lg text-stone-900">Esther</span>
+            </div>
+            <p class="text-xs text-stone-400 font-light">Made with <span class="text-rose-400">♥</span> — a little corner of the internet just for you</p>
+            <p class="text-[10px] text-stone-300 mt-2">@21ester_goddes</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const photos = [
+            { url: 'https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25', caption: 'selfie days ✨' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce', caption: 'natural beauty 🤍' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47', caption: 'silly moments 🇺🇸' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c', caption: 'those locks 💫' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606', caption: 'playful spirit 😛' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e', caption: 'so elegant 🌹' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d', caption: 'regal vibes 💙' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef', caption: 'sporty & cute 😜' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f', caption: 'outdoor chill 🌿' },
+            { url: 'https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7', caption: 'mysterious ✌️' },
+        ];
+
+        let currentPhotoIndex = 0;
+
+        function openLightbox(index) {
+            currentPhotoIndex = index;
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            const caption = document.getElementById('lightbox-caption');
+            img.src = photos[index].url;
+            caption.textContent = photos[index].caption;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function navigateLightbox(direction) {
+            currentPhotoIndex = (currentPhotoIndex + direction + photos.length) % photos.length;
+            const img = document.getElementById('lightbox-img');
+            const caption = document.getElementById('lightbox-caption');
+            img.style.opacity = '0';
+            img.style.transform = 'scale(0.95) translateX(' + (direction * 30) + 'px)';
+            caption.style.opacity = '0';
+            setTimeout(() => {
+                img.src = photos[currentPhotoIndex].url;
+                caption.textContent = photos[currentPhotoIndex].caption;
+                img.style.transition = 'all 0.3s ease';
+                caption.style.transition = 'opacity 0.3s ease';
+                img.style.opacity = '1';
+                img.style.transform = 'scale(1) translateX(0)';
+                caption.style.opacity = '1';
+                setTimeout(() => { img.style.transition = ''; caption.style.transition = ''; }, 300);
+            }, 150);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const lb = document.getElementById('lightbox');
+            if (!lb.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.animate-drop-in').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        setTimeout(() => {
+            document.querySelectorAll('.animate-drop-in').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                    el.style.animationPlayState = 'running';
+                }
+            });
+        }, 100);
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
