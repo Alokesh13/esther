@@ -1,912 +1,743 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Esther</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'geist': ['Geist', 'sans-serif'],
-                        'serif-display': ['Instrument Serif', 'serif'],
-                        'jakarta': ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Geist', sans-serif; background: #Fdfcf8; }
-        .font-serif-display { font-family: 'Instrument Serif', serif; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Happy 18th Birthday, Bubs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4ecdc; --card:#fbf5e7; --ink:#33241a; --ink-soft:#7a6553;
+  --accent:#bc4722; --accent-deep:#8e3013; --gold:#c99236;
+  --dark:#251812; --cream:#f1e3cd;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{overflow-x:clip}
+body{background:var(--paper);color:var(--ink);font-family:"Fraunces",serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden}
+::selection{background:var(--accent);color:#fff8ec}
+button{font-family:inherit}
+:focus-visible{outline:2px dashed var(--accent);outline-offset:3px}
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #d4d4d4; }
+/* paper grain over everything */
+body::after{content:"";position:fixed;inset:0;z-index:140;pointer-events:none;opacity:.45;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");}
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out forwards;
-        }
-        .delay-100 { animation-delay: 100ms; }
-        .delay-200 { animation-delay: 200ms; }
-        .delay-300 { animation-delay: 300ms; }
-        .delay-400 { animation-delay: 400ms; }
-        .delay-500 { animation-delay: 500ms; }
-        .delay-600 { animation-delay: 600ms; }
-        .delay-700 { animation-delay: 700ms; }
-        .delay-800 { animation-delay: 800ms; }
+/* ---------- reveal helpers ---------- */
+.reveal,.reveal-hero{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.9,.3,1)}
+.reveal.in,.reveal-hero.in{opacity:1;transform:none}
 
-        @keyframes dropIn {
-            0% { opacity: 0; transform: translateY(-60px) rotate(var(--rot)); }
-            60% { transform: translateY(8px) rotate(var(--rot)); }
-            80% { transform: translateY(-4px) rotate(var(--rot)); }
-            100% { opacity: 1; transform: translateY(0) rotate(var(--rot)); }
-        }
-        .animate-drop-in {
-            opacity: 0;
-            animation: dropIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
+/* ---------- toast ---------- */
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,16px);z-index:160;
+  background:var(--ink);color:var(--cream);padding:11px 22px;border-radius:999px;font-size:.95rem;
+  opacity:0;pointer-events:none;transition:.35s cubic-bezier(.22,.9,.3,1);box-shadow:0 10px 26px rgba(40,22,10,.3);max-width:88vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
 
-        .photo-card {
-            --rot: 0deg;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .photo-card:hover {
-            z-index: 50 !important;
-            transform: rotate(0deg) scale(1.08) translateY(-12px) !important;
-            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.02);
-        }
+#confetti{position:fixed;inset:0;z-index:150;pointer-events:none;width:100%;height:100%}
 
-        /* === INFINITE SCROLL SLIDER === */
-        @keyframes scroll-right {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        @keyframes scroll-left {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
-        }
-        .scroll-row-1 .infinite-scroll-inner {
-            animation: scroll-right 35s linear infinite;
-        }
-        .scroll-row-2 .infinite-scroll-inner {
-            animation: scroll-left 40s linear infinite;
-        }
-        .scroll-mask {
-            mask: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
-            -webkit-mask: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
-        }
-        .slider-image-item {
-            transition: transform 0.4s ease, filter 0.4s ease, box-shadow 0.4s ease;
-            cursor: pointer;
-        }
-        .slider-image-item:hover {
-            transform: scale(1.08) translateY(-4px);
-            filter: brightness(1.1) saturate(1.1);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
-        }
-        .slider-section {
-            background: #1c1917;
-            position: relative;
-            overflow: hidden;
-        }
-        .slider-section::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: 
-                radial-gradient(ellipse at 30% 50%, rgba(251, 191, 36, 0.06) 0%, transparent 60%),
-                radial-gradient(ellipse at 70% 50%, rgba(244, 63, 94, 0.06) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: 1;
-        }
+/* ================= INTRO / ENVELOPE ================= */
+#intro{position:fixed;inset:0;z-index:130;background:var(--paper);display:grid;place-items:center;transition:opacity .85s ease}
+#intro.bye{opacity:0;pointer-events:none}
+.intro-big{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:46vmin;line-height:1;
+  color:transparent;-webkit-text-stroke:2px rgba(150,90,55,.14);user-select:none}
+.intro-center{position:relative;text-align:center;padding:20px}
+.intro-kicker{font-family:"Caveat",cursive;font-size:clamp(1.4rem,3.5vw,1.8rem);color:var(--ink-soft);margin-bottom:34px}
 
-        /* === END SLIDER === */
+.envelope{position:relative;width:340px;height:230px;margin:0 auto;perspective:1000px;animation:floaty 4.5s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.env-back{position:absolute;inset:0;background:#a03f22;border-radius:8px;box-shadow:0 24px 50px rgba(80,35,15,.28)}
+.letter-card{position:absolute;left:16px;right:16px;top:22px;bottom:14px;background:var(--card);border-radius:5px;z-index:2;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  box-shadow:0 -4px 14px rgba(60,25,10,.15);transition:transform 1s cubic-bezier(.3,1.2,.4,1)}
+.letter-card .to{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-soft)}
+.letter-card .name{font-family:"Caveat",cursive;font-size:2.3rem;color:var(--accent);line-height:1}
+.letter-card svg{width:22px;height:22px;fill:var(--accent)}
+.envelope.up .letter-card{transform:translateY(-64%)}
+.env-front{position:absolute;inset:0;z-index:3;border-radius:8px}
+.env-front .pf-bottom{position:absolute;inset:0;background:#b64a2a;clip-path:polygon(0 100%,100% 100%,50% 44%);border-radius:8px}
+.env-front .pf-left{position:absolute;inset:0;background:#ae4526;clip-path:polygon(0 0,0 100%,53% 50%)}
+.env-front .pf-right{position:absolute;inset:0;background:#ae4526;clip-path:polygon(100% 0,100% 100%,47% 50%)}
+.flap-wrap{position:absolute;top:0;left:0;right:0;height:62%;z-index:5;transform-origin:50% 0;transform-style:preserve-3d;
+  transition:transform .85s cubic-bezier(.55,0,.25,1)}
+.flap-wrap.behind{z-index:1}
+.flap-wrap.open{transform:rotateX(180deg)}
+.flap-face{position:absolute;inset:0;backface-visibility:hidden}
+.flap-face.ff{background:#bb4f2d;clip-path:polygon(0 0,100% 0,50% 100%)}
+.flap-face.fb{background:#8f3823;clip-path:polygon(0 0,100% 0,50% 100%);transform:rotateX(180deg)}
+.seal{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:66px;height:66px;z-index:6;cursor:pointer;border:none;
+  border-radius:46% 54% 52% 48%/52% 48% 54% 46%;background:#7d2317;color:#f3d9c9;
+  font-family:"Fraunces",serif;font-size:1.55rem;font-weight:700;
+  box-shadow:inset 0 3px 6px rgba(255,255,255,.18),inset 0 -5px 9px rgba(0,0,0,.35),0 5px 12px rgba(60,20,10,.35)}
+.seal::after{content:"";position:absolute;inset:8px;border-radius:inherit;border:1.5px dashed rgba(243,217,201,.45)}
+.seal::before{content:"";position:absolute;inset:-9px;border-radius:inherit;border:2px solid rgba(125,35,23,.55);animation:pulse 2.1s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.88);opacity:.9}70%,100%{transform:scale(1.3);opacity:0}}
+.seal.crack{animation:crack .55s ease-in forwards;pointer-events:none}
+@keyframes crack{0%{transform:translate(-50%,-50%) scale(1) rotate(0)}
+  40%{transform:translate(-50%,-50%) scale(1.25) rotate(9deg)}
+  100%{transform:translate(-50%,-50%) scale(.4) rotate(-16deg);opacity:0}}
+.intro-tap{margin-top:36px;font-family:"Caveat",cursive;font-size:1.4rem;color:var(--accent);display:inline-flex;align-items:center;gap:8px;animation:bob 2s ease-in-out infinite}
+.intro-tap svg{width:26px;height:30px;transform:rotate(180deg)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-        .clothesline { position: relative; }
-        .clothesline::before {
-            content: '';
-            position: absolute;
-            top: -18px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: #a8a29e;
-            border-radius: 2px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-        }
-        .clothesline::after {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: rgba(255,255,255,0.4);
-            border-radius: 1px;
-        }
+/* ================= HERO ================= */
+.hero{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;padding:90px 22px 70px;overflow:hidden}
+#motes{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero-inner{position:relative;max-width:820px;cursor:default}
+.eyebrow{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:22px}
+h1{font-size:clamp(2.9rem,9vw,6.2rem);font-weight:560;line-height:.98;letter-spacing:-.02em}
+h1 .num{color:var(--accent);font-style:italic}
+h1 sup{font-size:.4em;font-weight:400}
+h1 em{color:var(--accent);font-weight:480}
+.counter{display:flex;justify-content:center;flex-wrap:wrap;gap:0;margin-top:42px}
+.cg{display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 clamp(12px,3vw,26px)}
+.cg+.cg{border-left:1px solid rgba(51,36,26,.18)}
+.cnum{font-size:clamp(1.7rem,4.5vw,2.5rem);font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+.clab{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-soft)}
+.hero-sub{margin-top:18px;font-style:italic;color:var(--ink-soft);font-size:1.05rem}
+.stamp{position:absolute;top:clamp(16px,4vw,48px);right:clamp(8px,5vw,60px);width:clamp(96px,13vw,150px);color:var(--accent);mix-blend-mode:multiply;opacity:.92}
+.stamp .spin{transform-origin:70px 70px;animation:spin 18s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stamp-text{font-size:13.5px;font-weight:600;letter-spacing:2.5px;fill:currentColor;font-family:"Fraunces",serif}
+.stamp-ring{stroke:currentColor;stroke-width:1.5;fill:none}
+.stamp-heart{fill:currentColor}
+.stamp-18{font-family:"Fraunces",serif;font-weight:700;font-size:23px;fill:currentColor}
+.scroll-cue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-family:"Caveat",cursive;font-size:1.2rem;color:var(--ink-soft);cursor:pointer;background:none;border:none}
+.scroll-cue svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;animation:dip 1.8s ease-in-out infinite}
+@keyframes dip{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-        .pin { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); width: 20px; height: 32px; z-index: 10; }
-        .pin::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 12px;
-            height: 12px;
-            background: #b45309;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.3);
-        }
-        .pin::after {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 3px;
-            height: 18px;
-            background: linear-gradient(to bottom, #b45309, #92400e);
-            border-radius: 1px;
-            box-shadow: 1px 0 2px rgba(0,0,0,0.15);
-        }
+/* ================= RIBBON ================= */
+.ribbon{background:var(--accent);color:#f9f1de;width:104%;margin:6px 0 6px -2%;transform:rotate(-1.3deg);overflow:hidden;padding:13px 0;box-shadow:0 8px 22px rgba(140,50,20,.22)}
+.ribbon-track{display:flex;width:max-content;animation:scrollX 30s linear infinite}
+@keyframes scrollX{to{transform:translateX(-50%)}}
+.rb-group{display:flex;align-items:center;gap:30px;padding-right:30px;white-space:nowrap;font-style:italic;font-weight:500;font-size:1.05rem}
+.rb-group svg{width:13px;height:13px;fill:#f9f1de;flex:0 0 auto}
 
-        .tape {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%) rotate(var(--tape-rot, 0deg));
-            width: 60px;
-            height: 22px;
-            background: rgba(251, 191, 36, 0.45);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            z-index: 10;
-            backdrop-filter: blur(1px);
-        }
+/* ================= SECTIONS ================= */
+.section{padding:clamp(76px,11vw,120px) 22px;text-align:center;position:relative}
+.sec-head h2{font-size:clamp(2rem,5.4vw,3rem);font-weight:560;letter-spacing:-.015em}
+.sec-head em{color:var(--accent)}
+.sub{color:var(--ink-soft);font-style:italic;margin-top:10px}
 
-        .polaroid {
-            background: white;
-            padding: 10px 10px 40px 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
-        }
+/* letter */
+.paper{max-width:640px;margin:44px auto 0;background:var(--card);padding:clamp(30px,6vw,56px);text-align:left;position:relative;
+  transform:rotate(-.7deg);box-shadow:0 24px 55px rgba(51,36,26,.16),0 2px 0 rgba(51,36,26,.05)}
+.tape{position:absolute;width:112px;height:30px;background:rgba(188,71,34,.26);border-left:1px dashed rgba(188,71,34,.35);border-right:1px dashed rgba(188,71,34,.35)}
+.paper .tape{top:-15px;left:46px;transform:rotate(-4deg)}
+.hand{font-family:"Caveat",cursive;font-size:clamp(1.4rem,2.8vw,1.68rem);line-height:1.42;color:#3d2b1e}
+.hand+.hand{margin-top:1em}
+.sign{color:var(--accent);font-weight:600;text-align:right}
 
-        @keyframes floatHeart {
-            0% { opacity: 0; transform: translateY(0) scale(0.5); }
-            20% { opacity: 0.7; }
-            100% { opacity: 0; transform: translateY(-120px) scale(1.2); }
-        }
-        .floating-heart { animation: floatHeart 3s ease-out forwards; }
+/* song */
+.song-frame{max-width:560px;margin:44px auto 0;background:#2e1f16;padding:20px 20px 16px;border-radius:14px;position:relative;transform:rotate(.8deg);
+  box-shadow:0 26px 60px rgba(40,22,10,.32)}
+.song-frame .tape.tl{top:-13px;left:-26px;transform:rotate(-42deg);background:rgba(244,236,220,.4)}
+.song-frame .tape.tr{top:-13px;right:-26px;transform:rotate(42deg);background:rgba(244,236,220,.4)}
+.song-note{color:#e8c9a8;text-align:left;margin:0 4px 14px;display:flex;align-items:flex-start;gap:10px}
+.song-note svg{width:30px;height:36px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transform:translateY(4px)}
+.song-frame iframe{display:block;width:100%;border-radius:10px}
 
-        .bg-texture {
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(251, 191, 36, 0.04) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(211, 47, 47, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.03) 0%, transparent 50%);
-        }
+/* cake */
+.cake-sec{background:var(--dark);color:var(--cream)}
+.cake-sec .sec-head h2{color:var(--cream)}
+.cake-sec .sub{color:#d9c4ab}
+.linkish{background:none;border:none;color:var(--gold);text-decoration:underline dotted;cursor:pointer;font-size:inherit;font-style:italic}
+.linkish:hover{color:#e0b46a}
+.breath-meter{display:flex;align-items:center;justify-content:center;gap:12px;margin:26px auto 0;opacity:0;transform:translateY(6px);transition:.5s}
+.breath-meter.on{opacity:1;transform:none}
+.bm-label{font-family:"Caveat",cursive;font-size:1.25rem;color:var(--gold)}
+.bm-track{width:min(230px,50vw);height:10px;border-radius:99px;background:rgba(241,227,205,.14);overflow:hidden}
+.bm-fill{height:100%;width:0%;background:var(--gold);border-radius:99px;transition:width .12s linear}
+.stage{position:relative;width:340px;height:300px;margin:44px auto 0}
+.plate{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;width:316px;height:42px;border-radius:50%;background:#ead9bd;
+  box-shadow:0 12px 26px rgba(0,0,0,.45),inset 0 -9px 0 rgba(120,80,40,.18)}
+.tier{position:absolute;left:50%;transform:translateX(-50%);border-radius:10px 10px 12px 12px;
+  box-shadow:inset 0 -12px 0 rgba(60,30,10,.14),0 4px 0 rgba(0,0,0,.22)}
+.tier.bottom{width:260px;height:84px;bottom:24px;background:#d99b5e;z-index:2}
+.tier.top{width:190px;height:72px;bottom:100px;background:#e2a869;z-index:3}
+.frosting{position:absolute;top:0;left:0;right:0;height:22px;background:#f7efdf;border-radius:9px 9px 0 0}
+.drips{position:absolute;top:20px;left:18px;width:11px;height:20px;background:#f7efdf;border-radius:0 0 10px 10px;
+  box-shadow:36px 6px 0 #f7efdf,72px -2px 0 #f7efdf,108px 8px 0 #f7efdf,144px 2px 0 #f7efdf,180px -3px 0 #f7efdf,216px 5px 0 #f7efdf}
+.tier.top .drips{left:12px;box-shadow:34px 4px 0 #f7efdf,68px -3px 0 #f7efdf,102px 6px 0 #f7efdf,136px 0 0 #f7efdf}
+.candle{position:absolute;width:9px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;cursor:pointer;z-index:4}
+.candle.back{filter:brightness(.82)}
+.candle::before{content:"";position:absolute;inset:-10px -12px}
+.stick{width:9px;height:var(--h,44px);background:var(--cd,#d98d84);border-radius:3px 3px 2px 2px;box-shadow:inset -2px 0 0 rgba(0,0,0,.14)}
+.wick{width:2px;height:5px;background:#4a3226}
+.flame{width:13px;height:20px;margin-bottom:-2px;border-radius:50% 50% 45% 45%/65% 65% 35% 35%;background:#f5a83c;position:relative;
+  transform-origin:50% 100%;animation:flick var(--d,.22s) ease-in-out infinite alternate;
+  box-shadow:0 0 16px 5px rgba(244,158,54,.42),0 0 44px 14px rgba(244,158,54,.14)}
+.flame::before{content:"";position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:6px;height:9px;border-radius:inherit;background:#ffe6a3}
+@keyframes flick{from{transform:scaleY(1) skewX(0)}to{transform:scaleY(.84) skewX(5deg) translateY(1px)}}
+.smoke{position:absolute;left:50%;top:-34px;width:6px;height:6px;border-radius:50%;background:rgba(205,195,185,.55);filter:blur(3px);opacity:0;pointer-events:none}
+.candle.out .flame{animation:snuff .32s ease-in forwards;box-shadow:none}
+@keyframes snuff{to{transform:translateY(7px) scaleY(.05);opacity:0}}
+.candle.out .smoke{animation:smoke 1.9s ease-out .12s}
+@keyframes smoke{0%{opacity:0;transform:translate(-50%,0) scale(1)}18%{opacity:.55}100%{opacity:0;transform:translate(-50%,-48px) scale(3.4)}}
+.wish-msg{display:none;max-width:520px;margin:36px auto 0}
+.wish-msg.show{display:block;animation:fadeUp .9s cubic-bezier(.22,.9,.3,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.wish-msg .big{font-size:clamp(1.7rem,4vw,2.1rem);color:var(--cream)}
+.wish-msg p+p{margin-top:10px;color:#d9c4ab;font-style:italic}
 
-        .wall-texture {
-            background-color: #Fdfcf8;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a8a29e' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
+/* buttons */
+.btn{display:inline-block;margin-top:26px;background:var(--ink);color:var(--cream);border:none;border-radius:999px;
+  padding:13px 28px;font-size:1rem;font-weight:500;cursor:pointer;transition:.25s;box-shadow:0 6px 16px rgba(51,36,26,.22)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(51,36,26,.28)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.cake-sec .btn{background:var(--accent)}
 
-        .nail {
-            position: absolute;
-            top: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
-            background: radial-gradient(circle at 35% 35%, #d6d3d1, #78716c);
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.4);
-            z-index: 10;
-        }
-        .string {
-            position: absolute;
-            top: -2px;
-            left: 50%;
-            width: 2px;
-            height: 20px;
-            background: #a8a29e;
-            z-index: 9;
-        }
+/* notes / reasons */
+.notes-board{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:16px;max-width:860px;margin:44px auto 8px;min-height:110px}
+.note{background:#fdf7e8;width:min(238px,44%);padding:15px 17px 17px;text-align:left;position:relative;
+  font-family:"Caveat",cursive;font-size:1.34rem;line-height:1.25;color:#3d2b1e;
+  box-shadow:0 7px 18px rgba(51,36,26,.14);transform:rotate(var(--r,0deg)) translateY(var(--ty,0px)) scale(.6);opacity:0;
+  transition:transform .55s cubic-bezier(.3,1.4,.4,1),opacity .45s}
+.note.in{transform:rotate(var(--r,0deg)) translateY(var(--ty,0px)) scale(1);opacity:1}
+.note:hover{transform:rotate(0deg) translateY(var(--ty,0px)) scale(1.04)}
+.note b{display:block;font-family:"Fraunces",serif;font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.note.fin{background:var(--accent);color:#fff4e2;width:min(300px,60%)}
+.note.fin b{color:#ffd9a8}
+.pull-count{margin-top:18px;font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-soft)}
 
-        .pushpin { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 10; }
-        .pushpin::before {
-            content: '';
-            display: block;
-            width: 14px;
-            height: 14px;
-            background: radial-gradient(circle at 40% 35%, #f87171, #dc2626);
-            border-radius: 50%;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.4);
-        }
-        .pushpin::after {
-            content: '';
-            display: block;
-            width: 3px;
-            height: 6px;
-            background: #991b1b;
-            margin: -2px auto 0;
-            border-radius: 0 0 1px 1px;
-        }
+/* small surprise from alokesh */
+.surprise-wrap{max-width:500px;margin:44px auto 0;text-align:center}
+.surprise-btn{background:var(--gold);color:var(--ink);font-family:"Caveat",cursive;font-size:1.3rem;padding:14px 26px;box-shadow:0 6px 16px rgba(201,146,54,.3);border-radius:12px}
+.surprise-btn:hover{transform:translateY(-2px)}
+.surprise-btn:active{transform:translateY(0)}
+.surprise-note{background:var(--card);border:1px solid rgba(51,36,26,.1);border-radius:8px;padding:25px;margin-top:20px;display:none;position:relative;text-align:center;
+  box-shadow:0 18px 40px rgba(51,36,26,.15);transform:rotate(-1deg)}
+.surprise-note.show{display:block;animation:fadeUp .8s cubic-bezier(.22,.9,.3,1)}
+.surprise-note::before{content:"";position:absolute;top:-14px;left:50%;transform:translateX(-50%) rotate(-4deg);width:90px;height:24px;background:rgba(188,71,34,.24);border-left:1px dashed rgba(188,71,34,.35);border-right:1px dashed rgba(188,71,34,.35)}
+.surprise-note p{font-family:"Caveat",cursive;font-size:1.5rem;line-height:1.4;color:#3d2b1e}
+.surprise-note p+p{margin-top:10px}
+.surprise-note .sign{color:var(--accent);font-weight:600;text-align:right;font-size:1.7rem}
 
-        .clothesline-2 { position: relative; }
-        .clothesline-2::before {
-            content: '';
-            position: absolute;
-            top: -18px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: #a8a29e;
-            border-radius: 2px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-        }
-        .clothesline-2::after {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: rgba(255,255,255,0.4);
-            border-radius: 1px;
-        }
+/* footer */
+.footer{padding:90px 22px 70px;text-align:center}
+.footer .beat{width:30px;height:30px;fill:var(--accent);animation:beat 1.6s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}12%{transform:scale(1.22)}24%{transform:scale(1)}36%{transform:scale(1.16)}48%{transform:scale(1)}}
+.footer p:first-of-type{margin-top:16px;font-size:1.05rem}
+.footer .hand{margin-top:6px;color:var(--accent);font-size:1.5rem}
+.tiny{margin-top:26px;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)}
 
-        .photo-card .photo-inner { overflow: hidden; }
-        .photo-card .photo-inner img { transition: transform 0.7s ease; }
-        .photo-card:hover .photo-inner img { transform: scale(1.05); }
-
-        .lightbox {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .lightbox.active { opacity: 1; pointer-events: all; }
-        .lightbox img {
-            max-width: 90vw;
-            max-height: 85vh;
-            border-radius: 4px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-            transform: scale(0.9);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .lightbox.active img { transform: scale(1); }
-
-        .spotify-glow { position: relative; }
-        .spotify-glow::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #1DB954, #191414, #1DB954);
-            background-size: 300% 300%;
-            animation: spotifyGlow 4s ease-in-out infinite;
-            z-index: -1;
-            opacity: 0.5;
-            filter: blur(8px);
-        }
-        @keyframes spotifyGlow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        /* Transition from light to dark slider section */
-        .section-fade-to-dark {
-            position: relative;
-        }
-        .section-fade-to-dark::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(to bottom, #Fdfcf8, #1c1917);
-            pointer-events: none;
-            z-index: 5;
-        }
-        .section-fade-to-light {
-            position: relative;
-        }
-        .section-fade-to-light::before {
-            content: '';
-            position: absolute;
-            top: -1px;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(to bottom, #1c1917, #Fdfcf8);
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        /* Pause on hover */
-        .scroll-row-1:hover .infinite-scroll-inner,
-        .scroll-row-2:hover .infinite-scroll-inner {
-            animation-play-state: paused;
-        }
-    </style>
+@media (max-width:640px){
+  .stamp{top:8px;right:2px;opacity:.75}
+  .cg{padding:0 10px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
 </head>
-<body class="bg-texture wall-texture min-h-screen">
+<body class="locked">
 
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-10">
-            <i data-lucide="x" class="w-8 h-8"></i>
-        </button>
-        <button onclick="event.stopPropagation(); navigateLightbox(-1)" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-2 z-10">
-            <i data-lucide="chevron-left" class="w-10 h-10"></i>
-        </button>
-        <button onclick="event.stopPropagation(); navigateLightbox(1)" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors p-2 z-10">
-            <i data-lucide="chevron-right" class="w-10 h-10"></i>
-        </button>
-        <div class="text-center">
-            <img id="lightbox-img" src="" alt="Esther" onclick="event.stopPropagation()">
-            <p id="lightbox-caption" class="text-white/50 text-sm mt-4 font-light"></p>
-        </div>
+<svg style="display:none" aria-hidden="true">
+  <symbol id="heart" viewBox="0 0 24 24">
+    <path d="M12 20.4S3.4 15 1.9 9.6C.9 6 3.3 3 6.6 3 8.9 3 10.9 4.4 12 6.2 13.1 4.4 15.1 3 17.4 3c3.3 0 5.7 3 4.7 6.6C20.6 15 12 20.4 12 20.4z"/>
+  </symbol>
+</svg>
+
+<canvas id="confetti"></canvas>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ============ THE ENVELOPE ============ -->
+<div id="intro">
+  <div class="intro-big" aria-hidden="true">18</div>
+  <div class="intro-center">
+    <p class="intro-kicker">psst&hellip; you&rsquo;ve got mail, bubs</p>
+    <div class="envelope" id="envelope">
+      <div class="env-back"></div>
+      <div class="letter-card">
+        <span class="to">for</span>
+        <span class="name">bubs</span>
+        <svg aria-hidden="true"><use href="#heart"/></svg>
+      </div>
+      <div class="env-front">
+        <div class="pf-left"></div><div class="pf-right"></div><div class="pf-bottom"></div>
+      </div>
+      <div class="flap-wrap" id="flapWrap">
+        <div class="flap-face ff"></div>
+        <div class="flap-face fb"></div>
+      </div>
+      <button class="seal" id="seal" aria-label="Break the wax seal and open the letter">18</button>
+    </div>
+    <p class="intro-tap">tap the wax seal
+      <svg viewBox="0 0 40 46" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 42C20 24 20 16 20 6"/><path d="M11 15l9-9 9 9"/>
+      </svg>
+    </p>
+  </div>
+</div>
+
+<main id="page">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <canvas id="motes" aria-hidden="true"></canvas>
+    <div class="hero-inner" id="heroInner">
+      <p class="eyebrow reveal-hero">a tiny universe, built for exactly one person</p>
+      <h1 class="reveal-hero">Happy <span class="num">18<sup>th</sup></span> Birthday,<br><em>Bubs</em></h1>
+      <div class="counter reveal-hero">
+        <div class="cg"><span class="cnum" id="cYears">18</span><span class="clab">years</span></div>
+        <div class="cg"><span class="cnum" id="cDays">&mdash;</span><span class="clab">days</span></div>
+        <div class="cg"><span class="cnum" id="cH">--</span><span class="clab">hours</span></div>
+        <div class="cg"><span class="cnum" id="cM">--</span><span class="clab">mins</span></div>
+        <div class="cg"><span class="cnum" id="cS">--</span><span class="clab">secs</span></div>
+      </div>
+      <p class="hero-sub reveal-hero">&hellip;of you making the world lovelier. and counting.</p>
     </div>
 
-    <!-- Background blurs -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-amber-200/20 blur-[120px]"></div>
-        <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-rose-200/15 blur-[120px]"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-purple-200/10 blur-[100px]"></div>
+    <svg class="stamp reveal-hero" viewBox="0 0 140 140" aria-hidden="true">
+      <defs><path id="cp" d="M70,70 m-52,0 a52,52 0 1,1 104,0 a52,52 0 1,1 -104,0"/></defs>
+      <g class="spin"><text class="stamp-text"><textPath href="#cp" textLength="326">OFFICIALLY EIGHTEEN &#8226; STILL MY BUBS &#8226; CERTIFIED ICON &#8226;&#160;</textPath></text></g>
+      <circle class="stamp-ring" cx="70" cy="70" r="34"/>
+      <path class="stamp-heart" d="M70 64c-4.5-3.3-9-6.2-9-10.3 0-2.6 2-4.4 4.2-4.4 2 0 3.5 1.2 4.8 3 1.3-1.8 2.8-3 4.8-3 2.2 0 4.2 1.8 4.2 4.4 0 4.1-4.5 7-9 10.3z"/>
+      <text class="stamp-18" x="70" y="93" text-anchor="middle">18</text>
+    </svg>
+
+    <button class="scroll-cue reveal-hero" id="scrollCue">
+      scroll, my love
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 9 12 16 19 9"/></svg>
+    </button>
+  </header>
+
+  <!-- ============ RIBBON ============ -->
+  <div class="ribbon" aria-hidden="true">
+    <div class="ribbon-track">
+      <div class="rb-group">
+        <span>happy 18th, bubs</span><svg><use href="#heart"/></svg>
+        <span>officially an adult</span><svg><use href="#heart"/></svg>
+        <span>still my favorite person</span><svg><use href="#heart"/></svg>
+        <span>eighteen looks good on you</span><svg><use href="#heart"/></svg>
+        <span>make a wish</span><svg><use href="#heart"/></svg>
+        <span>blow the candles</span><svg><use href="#heart"/></svg>
+      </div>
+      <div class="rb-group">
+        <span>happy 18th, bubs</span><svg><use href="#heart"/></svg>
+        <span>officially an adult</span><svg><use href="#heart"/></svg>
+        <span>still my favorite person</span><svg><use href="#heart"/></svg>
+        <span>eighteen looks good on you</span><svg><use href="#heart"/></svg>
+        <span>make a wish</span><svg><use href="#heart"/></svg>
+        <span>blow the candles</span><svg><use href="#heart"/></svg>
+      </div>
     </div>
+  </div>
 
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-[#Fdfcf8]/80 backdrop-blur-md border-b border-stone-200/50">
-        <div class="max-w-6xl mx-auto px-6 h-full flex items-center justify-between">
-            <a href="#" class="flex items-center gap-2.5 group">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-white text-xs font-medium shadow-sm">
-                    E
-                </div>
-                <span class="font-serif-display text-xl text-stone-900">Esther</span>
-            </a>
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#reel" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors flex items-center gap-1.5">
-                    <i data-lucide="film" class="w-3.5 h-3.5"></i>
-                    Reel
-                </a>
-                <a href="#gallery" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Gallery</a>
-                <a href="#vibe" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors flex items-center gap-1.5">
-                    <i data-lucide="music" class="w-3.5 h-3.5"></i>
-                    Vibe
-                </a>
-                <a href="#about" class="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">About</a>
-                <button onclick="let hearts = document.querySelectorAll('.floating-heart-container'); hearts.forEach(c => c.classList.remove('invisible')); setTimeout(() => hearts.forEach(c => c.classList.add('invisible')), 3500);" class="flex items-center gap-2 px-4 py-2 bg-stone-900 text-[#Fdfcf8] text-xs font-medium uppercase tracking-widest rounded-full hover:bg-stone-700 transition-all">
-                    <i data-lucide="heart" class="w-3.5 h-3.5"></i>
-                    Send Love
-                </button>
-            </div>
-            <button class="md:hidden text-stone-600" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
-                <i data-lucide="menu" class="w-5 h-5"></i>
-            </button>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-[#Fdfcf8]/95 backdrop-blur-md border-b border-stone-200/50 px-6 py-4 space-y-3">
-            <a href="#reel" class="block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Reel</a>
-            <a href="#gallery" class="block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Gallery</a>
-            <a href="#vibe" class="block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Vibe</a>
-            <a href="#about" class="block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">About</a>
-        </div>
-    </nav>
-
-    <!-- Floating hearts containers -->
-    <div class="floating-heart-container invisible fixed top-1/4 left-[15%] z-40 pointer-events-none">
-        <div class="floating-heart text-rose-400 text-2xl" style="animation-delay: 0s;">♥</div>
+  <!-- ============ THE LETTER (edit this to make it yours) ============ -->
+  <section class="section">
+    <div class="sec-head reveal"><h2>a letter, <em>sealed with everything</em></h2></div>
+    <div class="paper reveal">
+      <span class="tape"></span>
+      <p class="hand">Dear bubs,</p>
+      <p class="hand">Eighteen. Actual adulthood. And yet you&rsquo;ll still fight me for the last fry, still laugh at your own jokes before the punchline, still be the softest person I know &mdash; and I hope you never change a single bit of it.</p>
+      <p class="hand">I hope this year is everything the last seventeen were, but louder. More road trips, more kitchen dancing, more of your terrible playlists and my worse dancing. And on the heavy days, I hope you remember: you don&rsquo;t carry anything alone anymore. Not ever again.</p>
+      <p class="hand">The world is very lucky it finally gets the official version of you. I got lucky first.</p>
+      <p class="hand">Happy 18th, bubs.</p>
+      <p class="hand sign">&mdash; yours, always</p>
     </div>
-    <div class="floating-heart-container invisible fixed top-1/3 left-[40%] z-40 pointer-events-none">
-        <div class="floating-heart text-amber-400 text-xl" style="animation-delay: 0.3s;">♥</div>
+  </section>
+
+  <!-- ============ OUR SONG ============ -->
+  <section class="section" style="padding-top:20px">
+    <div class="sec-head reveal"><h2>our <em>song</em></h2><p class="sub">(you already know which one)</p></div>
+    <div class="song-frame reveal">
+      <span class="tape tl"></span><span class="tape tr"></span>
+      <p class="song-note hand"><span>press play &mdash; this whole page was built to sound like this song feels</span>
+        <svg viewBox="0 0 40 46" aria-hidden="true"><path d="M8 4c15 3 24 13 23 32"/><path d="M22 29l9 8 7-11"/></svg>
+      </p>
+      <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/4Zts9erRexAxILn5XjSwUN?utm_source=generator&si=f5f8c1af0aab46d6" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
-    <div class="floating-heart-container invisible fixed top-1/4 right-[20%] z-40 pointer-events-none">
-        <div class="floating-heart text-rose-300 text-3xl" style="animation-delay: 0.6s;">♥</div>
+  </section>
+
+  <!-- ============ CAKE ============ -->
+  <section class="section cake-sec" id="cakeSec">
+    <div class="sec-head reveal"><h2>make a <em>wish</em></h2>
+      <p class="sub">18 candles, one wish. blow them out &mdash; really blow, <button class="linkish" id="micBtn">use my breath</button> &mdash; or just tap the flames.</p>
     </div>
-    <div class="floating-heart-container invisible fixed top-1/2 left-[60%] z-40 pointer-events-none">
-        <div class="floating-heart text-pink-400 text-lg" style="animation-delay: 0.9s;">♥</div>
+    <div class="breath-meter" id="breathWrap">
+      <span class="bm-label">breath</span>
+      <div class="bm-track"><div class="bm-fill" id="breathFill"></div></div>
     </div>
-    <div class="floating-heart-container invisible fixed top-2/5 left-[25%] z-40 pointer-events-none">
-        <div class="floating-heart text-red-300 text-2xl" style="animation-delay: 1.2s;">♥</div>
+    <div class="stage reveal" id="stage">
+      <div class="plate"></div>
+      <div class="tier bottom"><div class="frosting"></div><div class="drips"></div></div>
+      <div class="tier top"><div class="frosting"></div><div class="drips"></div></div>
     </div>
+    <div class="wish-msg" id="wishMsg">
+      <p class="hand big">there it goes &mdash; 18 candles for 18 years.</p>
+      <p>whatever you wished for, consider it fast-tracked. happy birthday, bubs.</p>
+      <button class="btn" id="relight">light them again, for luck</button>
+    </div>
+  </section>
 
-    <!-- ==================== HERO ==================== -->
-    <section class="relative pt-32 pb-16 md:pt-44 md:pb-24 px-6 text-center overflow-hidden section-fade-to-dark">
-        <div class="max-w-4xl mx-auto relative z-10">
-            <div class="animate-fade-in-up">
-                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-stone-200/60 text-xs font-medium uppercase tracking-widest text-stone-500 mb-8 shadow-sm">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
-                    A Photo Wall
-                </span>
-            </div>
-            <h1 class="font-serif-display text-5xl md:text-7xl lg:text-8xl font-normal leading-[0.9] text-stone-900 animate-fade-in-up delay-200">
-                For <span class="italic text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-amber-500 to-rose-400">Esther</span>
-            </h1>
-            <p class="mt-8 text-base md:text-lg font-light leading-relaxed text-stone-500 max-w-xl mx-auto animate-fade-in-up delay-400">
-                Every photo tells a story, every moment a memory worth keeping. 
-                This little corner of the internet is yours.
-            </p>
-            <div class="mt-10 flex flex-wrap items-center justify-center gap-4 animate-fade-in-up delay-500">
-                <a href="#reel" class="group flex items-center gap-2 px-6 py-3 bg-stone-900 text-[#Fdfcf8] text-xs font-medium uppercase tracking-widest rounded-full hover:bg-stone-700 transition-all hover:shadow-lg hover:shadow-stone-900/10">
-                    <i data-lucide="film" class="w-3.5 h-3.5"></i>
-                    Memory Reel
-                </a>
-                <a href="#gallery" class="group flex items-center gap-2 px-6 py-3 bg-white/80 border border-stone-200/60 text-stone-600 text-xs font-medium uppercase tracking-widest rounded-full hover:bg-white hover:border-stone-300 transition-all shadow-sm">
-                    View Photos
-                    <i data-lucide="arrow-down" class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform"></i>
-                </a>
-            </div>
-            <div class="absolute top-20 left-10 md:left-20 text-amber-400/30 animate-fade-in-up delay-600">
-                <i data-lucide="heart" class="w-6 h-6"></i>
-            </div>
-            <div class="absolute top-32 right-10 md:right-24 text-rose-400/20 animate-fade-in-up delay-700">
-                <i data-lucide="star" class="w-5 h-5"></i>
-            </div>
-            <div class="absolute bottom-10 left-1/4 text-purple-400/20 animate-fade-in-up delay-800">
-                <i data-lucide="flower-2" class="w-5 h-5"></i>
-            </div>
-        </div>
-    </section>
+  <!-- ============ 18 REASONS ============ -->
+  <section class="section">
+    <div class="sec-head reveal"><h2>18 reasons <em>you&rsquo;re my favorite</em></h2>
+      <p class="sub">pull a note. then another. i&rsquo;ll wait.</p></div>
+    <div class="notes-board reveal" id="notesBoard"></div>
+    <button class="btn" id="pullBtn">pull a note</button>
+    <p class="pull-count" id="pullCount">0 of 18 pulled</p>
+  </section>
 
-    <!-- ==================== INFINITE SCROLL SLIDER (Memory Reel) ==================== -->
-    <section id="reel" class="slider-section py-16 md:py-24 relative">
-        <!-- Top fade from light -->
-        <div class="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-[#Fdfcf8] to-transparent z-10 pointer-events-none"></div>
-        
-        <div class="relative z-10 max-w-7xl mx-auto px-4">
-            <!-- Section header -->
-            <div class="text-center mb-12">
-                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-medium uppercase tracking-widest text-stone-400 mb-6">
-                    <i data-lucide="film" class="w-3.5 h-3.5 text-amber-400"></i>
-                    Memory Reel
-                </span>
-                <h2 class="font-serif-display text-3xl md:text-5xl text-white leading-tight">
-                    Moments on <span class="italic text-amber-400/80">loop</span>
-                </h2>
-                <p class="mt-3 text-sm text-stone-500 font-light">Hover to pause · Click to enlarge</p>
-            </div>
-        </div>
+  <!-- ============ SURPRISE FROM ALOKESH ============ -->
+  <section class="section" style="padding-top:30px">
+    <div class="sec-head reveal"><h2>a little <em>surprise</em></h2>
+      <p class="sub">from Alokesh, especially for you</p>
+    </div>
+    <div class="surprise-wrap reveal">
+      <button class="btn surprise-btn" id="surpriseBtn">Tap for a surprise from Alokesh</button>
+      <div class="surprise-note" id="surpriseNote">
+        <p>Hey Bubs,</p>
+        <p>I just wanted to say that you make everything better. I'm so excited to see you turn 18! Here's to the best year yet.</p>
+        <p>Happy 18th, Bubs!<br><span class="sign">— Alokesh</span></p>
+      </div>
+    </div>
+  </section>
 
-        <!-- Scroll Row 1 — Right -->
-        <div class="scroll-row-1 relative z-10 mb-6">
-            <div class="scroll-mask">
-                <div class="infinite-scroll-inner flex gap-5 w-max">
-                    <!-- Original 10 photos -->
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(0)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(1)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(2)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(3)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(4)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(5)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(6)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(7)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(8)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(9)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <!-- Duplicated for seamless loop -->
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(0)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(1)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(2)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(3)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(4)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(5)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(6)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(7)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(8)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(9)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                </div>
-            </div>
-        </div>
+  <footer class="footer">
+    <svg class="beat" aria-hidden="true"><use href="#heart"/></svg>
+    <p>here&rsquo;s to eighteen &mdash; and to every year after, with you.</p>
+    <p class="hand">happy 18th, bubs. i love you endlessly.</p>
+    <p class="tiny">made with too much love &amp; a little code</p>
+  </footer>
 
-        <!-- Scroll Row 2 — Left (offset images for visual variety) -->
-        <div class="scroll-row-2 relative z-10 mt-6">
-            <div class="scroll-mask">
-                <div class="infinite-scroll-inner flex gap-5 w-max">
-                    <!-- Shuffled order for variety: 5,8,1,9,3,7,0,6,2,4 -->
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(4)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(8)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(1)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(9)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(3)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(7)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(0)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(6)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(2)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(5)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <!-- Duplicated -->
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(4)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(8)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(1)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(9)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(3)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(7)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(0)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(6)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(2)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                    <div class="slider-image-item flex-shrink-0 w-52 h-52 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/5" onclick="openLightbox(5)">
-                        <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther" class="w-full h-full object-cover" loading="lazy">
-                    </div>
-                </div>
-            </div>
-        </div>
+</main>
 
-        <!-- Bottom fade to light -->
-        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#Fdfcf8] to-transparent z-10 pointer-events-none"></div>
-    </section>
+<script>
+/* =====================================================
+   EDIT ME: set the real birthday here.
+   e.g.  new Date(2007, 3, 12, 6, 12)  ->  12 April 2007, 06:12
+   (month is 0-based: January = 0, April = 3 ...)
+   Default below = exactly 18 years ago today.
+===================================================== */
+const BIRTH_DATE = (() => {
+  const n = new Date();
+  return new Date(n.getFullYear() - 18, n.getMonth(), n.getDate(), 6, 12);
+})();
 
-    <!-- ==================== HUNG PHOTOS GALLERY ==================== -->
-    <section id="gallery" class="relative px-6 pb-12 pt-8">
-        <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-6 animate-fade-in-up">
-                <span class="text-xs font-medium uppercase tracking-widest text-stone-400">~ Memories Hung With Care ~</span>
-            </div>
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2, '0');
 
-            <!-- Row 1 — Clothesline -->
-            <div class="clothesline relative pt-8 pb-6 px-4">
-                <div class="flex flex-wrap justify-center gap-8 md:gap-12">
-                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: -2.5deg; animation-delay: 0.3s; transform: rotate(-2.5deg);" onclick="openLightbox(0)">
-                        <div class="pin"></div>
-                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 220px; height: 280px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25" alt="Esther selfie" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">selfie days ✨</p>
-                    </div>
-                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: 1.8deg; animation-delay: 0.6s; transform: rotate(1.8deg);" onclick="openLightbox(1)">
-                        <div class="pin"></div>
-                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 200px; height: 270px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce" alt="Esther in white" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">natural beauty 🤍</p>
-                    </div>
-                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: -1.2deg; animation-delay: 0.9s; transform: rotate(-1.2deg);" onclick="openLightbox(2)">
-                        <div class="pin"></div>
-                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 230px; height: 260px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47" alt="Esther with cap" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">silly moments 🇺🇸</p>
-                    </div>
-                </div>
-            </div>
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg){
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 2800);
+}
 
-            <div class="flex justify-center py-6">
-                <div class="flex items-center gap-3 text-stone-300"><div class="w-8 h-px bg-stone-300"></div><i data-lucide="heart" class="w-3 h-3"></i><div class="w-8 h-px bg-stone-300"></div></div>
-            </div>
+/* ---------- confetti (paper bits + hearts, warm palette) ---------- */
+const conf = $('#confetti'), cctx = conf.getContext('2d');
+let pieces = [], confRunning = false;
+const PALETTE = ['#bc4722','#c99236','#e0a35c','#8e3013','#f3e2c2','#d98d84'];
+function sizeConf(){
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  conf.width = innerWidth * dpr; conf.height = innerHeight * dpr;
+  cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+sizeConf(); addEventListener('resize', sizeConf);
+function heartPath(ctx, s){
+  ctx.beginPath();
+  ctx.moveTo(0, s * .35);
+  ctx.bezierCurveTo(-s*.55, -s*.35, -s*1.05, s*.1, 0, s*.9);
+  ctx.bezierCurveTo( s*1.05,  s*.1,  s*.55, -s*.35, 0, s*.35);
+  ctx.closePath(); ctx.fill();
+}
+function burst(x, y, n = 120, heartsOnly = false){
+  for(let i = 0; i < n; i++){
+    const a = -Math.PI/2 + (Math.random() - .5) * Math.PI * 1.4;
+    const sp = 4 + Math.random() * 7.5;
+    pieces.push({
+      x, y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp,
+      rot: Math.random()*6.28, vr: (Math.random()-.5)*.3,
+      size: 5 + Math.random()*7,
+      color: PALETTE[Math.random()*PALETTE.length | 0],
+      shape: heartsOnly ? 2 : (Math.random()*3 | 0),
+      life: 1, decay: .006 + Math.random()*.007
+    });
+  }
+  if(!confRunning){ confRunning = true; confLoop(); }
+}
+function confLoop(){
+  cctx.clearRect(0, 0, innerWidth, innerHeight);
+  for(const p of pieces){
+    p.vy += .12; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life -= p.decay;
+    cctx.save(); cctx.translate(p.x, p.y); cctx.rotate(p.rot);
+    cctx.globalAlpha = Math.max(p.life, 0); cctx.fillStyle = p.color;
+    if(p.shape === 0) cctx.fillRect(-p.size/2, -p.size/3, p.size, p.size*.66);
+    else if(p.shape === 1){ cctx.beginPath(); cctx.arc(0, 0, p.size*.4, 0, 7); cctx.fill(); }
+    else heartPath(cctx, p.size * .85);
+    cctx.restore();
+  }
+  pieces = pieces.filter(p => p.life > 0 && p.y < innerHeight + 50);
+  if(pieces.length) requestAnimationFrame(confLoop);
+  else { confRunning = false; cctx.clearRect(0, 0, innerWidth, innerHeight); }
+}
 
-            <!-- Row 2 — Wall pinned -->
-            <div class="relative pt-8 pb-6 px-4">
-                <div class="flex flex-wrap justify-center gap-8 md:gap-12">
-                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: 2.2deg; animation-delay: 0.4s; transform: rotate(2.2deg);" onclick="openLightbox(3)">
-                        <div class="nail"></div><div class="string"></div>
-                        <div class="photo-inner rounded-lg overflow-hidden border-4 border-white shadow-lg" style="width: 210px; height: 290px; margin-top: 18px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c" alt="Esther hair detail" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">those locks 💫</p>
-                    </div>
-                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: -3deg; animation-delay: 0.7s; transform: rotate(-3deg);" onclick="openLightbox(4)">
-                        <div class="tape" style="--tape-rot: -8deg;"></div>
-                        <div class="photo-inner rounded-lg overflow-hidden shadow-lg" style="width: 230px; height: 280px; margin-top: 6px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606" alt="Esther playful" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">playful spirit 😛</p>
-                    </div>
-                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: 1.5deg; animation-delay: 1s; transform: rotate(1.5deg);" onclick="openLightbox(5)">
-                        <div class="tape" style="--tape-rot: 5deg; background: rgba(244, 114, 182, 0.35); border-color: rgba(244, 114, 182, 0.2);"></div>
-                        <div class="photo-inner rounded-lg overflow-hidden shadow-lg" style="width: 220px; height: 290px; margin-top: 6px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e" alt="Esther elegant" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">so elegant 🌹</p>
-                    </div>
-                </div>
-            </div>
+/* ---------- drifting golden motes in the hero ---------- */
+const hero = $('.hero'), mo = $('#motes'), mctx = mo.getContext('2d');
+let motar = [];
+function sizeMotes(){
+  const r = hero.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+  mo.width = r.width * dpr; mo.height = r.height * dpr;
+  mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if(!motar.length) for(let i = 0; i < 26; i++) motar.push({
+    x: Math.random()*r.width, y: Math.random()*r.height,
+    r: .8 + Math.random()*2, vy: -(.06 + Math.random()*.22), vx: (Math.random()-.5)*.12,
+    a: .08 + Math.random()*.22
+  });
+}
+sizeMotes(); addEventListener('resize', sizeMotes);
+(function moteLoop(){
+  const r = hero.getBoundingClientRect();
+  mctx.clearRect(0, 0, r.width, r.height);
+  mctx.fillStyle = '#c99236';
+  for(const m of motar){
+    m.x += m.vx; m.y += m.vy;
+    if(m.y < -8){ m.y = r.height + 8; m.x = Math.random()*r.width; }
+    mctx.globalAlpha = m.a;
+    mctx.beginPath(); mctx.arc(m.x, m.y, m.r, 0, 7); mctx.fill();
+  }
+  mctx.globalAlpha = 1;
+  requestAnimationFrame(moteLoop);
+})();
 
-            <div class="flex justify-center py-6">
-                <div class="flex items-center gap-3 text-stone-300"><div class="w-8 h-px bg-stone-300"></div><i data-lucide="music" class="w-3 h-3"></i><div class="w-8 h-px bg-stone-300"></div></div>
-            </div>
+/* ---------- the envelope opening ---------- */
+let opened = false;
+ $('#seal').addEventListener('click', () => {
+  if(opened) return; opened = true;
+  const seal = $('#seal'), flap = $('#flapWrap'), env = $('#envelope'), intro = $('#intro');
+  seal.classList.add('crack');
+  setTimeout(() => flap.classList.add('open'), 380);
+  setTimeout(() => flap.classList.add('behind'), 720);
+  setTimeout(() => env.classList.add('up'), 1150);
+  setTimeout(() => {
+    intro.classList.add('bye');
+    document.body.classList.remove('locked');
+    document.querySelectorAll('.reveal-hero').forEach((el, i) => {
+      el.style.transitionDelay = (i * 130) + 'ms';
+      el.classList.add('in');
+    });
+    burst(innerWidth/2, innerHeight*.42, 150);
+  }, 2100);
+  setTimeout(() => intro.remove(), 3050);
+});
 
-            <!-- Row 3 — Clothesline 2 -->
-            <div class="clothesline-2 relative pt-8 pb-6 px-4">
-                <div class="flex flex-wrap justify-center gap-8 md:gap-12">
-                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: 1deg; animation-delay: 0.5s; transform: rotate(1deg);" onclick="openLightbox(6)">
-                        <div class="pin"></div>
-                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 215px; height: 285px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d" alt="Esther blue gold" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">regal vibes 💙</p>
-                    </div>
-                    <div class="photo-card polaroid cursor-pointer relative animate-drop-in" style="--rot: -2deg; animation-delay: 0.8s; transform: rotate(-2deg);" onclick="openLightbox(7)">
-                        <div class="pin"></div>
-                        <div class="photo-inner rounded-sm overflow-hidden" style="width: 225px; height: 275px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef" alt="Esther sport" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-3 text-xs text-stone-400 font-light italic">sporty & cute 😜</p>
-                    </div>
-                </div>
-            </div>
+/* tiny heart pop wherever they click in the hero */
+ $('#heroInner').addEventListener('click', e => {
+  if(opened) burst(e.clientX, e.clientY, 9, true);
+});
+ $('#scrollCue').addEventListener('click', () => {
+  document.querySelector('.paper').scrollIntoView({behavior:'smooth', block:'center'});
+});
 
-            <div class="flex justify-center py-6">
-                <div class="flex items-center gap-3 text-stone-300"><div class="w-8 h-px bg-stone-300"></div><i data-lucide="star" class="w-3 h-3"></i><div class="w-8 h-px bg-stone-300"></div></div>
-            </div>
+/* ---------- live counter ---------- */
+function fullYears(from, to){
+  let y = to.getFullYear() - from.getFullYear();
+  const m = to.getMonth() - from.getMonth();
+  if(m < 0 || (m === 0 && to.getDate() < from.getDate())) y--;
+  return y;
+}
+function tick(){
+  const now = new Date();
+  let diff = Math.max(0, now - BIRTH_DATE);
+  $('#cYears').textContent = fullYears(BIRTH_DATE, now);
+  $('#cDays').textContent  = Math.floor(diff / 864e5).toLocaleString();
+  const rem = diff % 864e5;
+  $('#cH').textContent = pad(Math.floor(rem / 36e5));
+  $('#cM').textContent = pad(Math.floor(rem % 36e5 / 6e4));
+  $('#cS').textContent = pad(Math.floor(rem % 6e4 / 1e3));
+}
+tick(); setInterval(tick, 1000);
 
-            <!-- Row 4 — Pushpins -->
-            <div class="relative pt-8 pb-6 px-4">
-                <div class="flex flex-wrap justify-center gap-8 md:gap-12">
-                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: -1.8deg; animation-delay: 0.6s; transform: rotate(-1.8deg);" onclick="openLightbox(8)">
-                        <div class="pushpin"></div>
-                        <div class="photo-inner rounded-lg overflow-hidden border-[3px] border-white shadow-lg" style="width: 235px; height: 290px; margin-top: 8px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f" alt="Esther outdoor" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">outdoor chill 🌿</p>
-                    </div>
-                    <div class="photo-card relative cursor-pointer animate-drop-in" style="--rot: 2.5deg; animation-delay: 0.9s; transform: rotate(2.5deg);" onclick="openLightbox(9)">
-                        <div class="pushpin"></div>
-                        <div class="photo-inner rounded-lg overflow-hidden border-[3px] border-white shadow-lg" style="width: 220px; height: 280px; margin-top: 8px;">
-                            <img src="https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7" alt="Esther grey jacket" class="w-full h-full object-cover" loading="lazy">
-                        </div>
-                        <p class="text-center mt-4 text-xs text-stone-400 font-light italic">mysterious ✌️</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+/* ---------- scroll reveals ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold:.12});
+document.querySelectorAll('main .reveal').forEach(el => io.observe(el));
 
-    <!-- ==================== SPOTIFY / VIBE ==================== -->
-    <section id="vibe" class="relative px-6 py-20 md:py-28">
-        <div class="max-w-2xl mx-auto">
-            <div class="text-center mb-10 animate-fade-in-up">
-                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-stone-200/60 text-xs font-medium uppercase tracking-widest text-stone-500 mb-6 shadow-sm">
-                    <i data-lucide="music-2" class="w-3.5 h-3.5 text-green-500"></i>
-                    The Vibe
-                </span>
-                <h2 class="font-serif-display text-3xl md:text-5xl text-stone-900 leading-tight">
-                    A song that <span class="italic">fits</span>
-                </h2>
-                <p class="mt-4 text-sm text-stone-400 font-light">Hit play and let the photos sink in</p>
-            </div>
-            <div class="animate-fade-in-up delay-200">
-                <div class="spotify-glow rounded-2xl">
-                    <div class="bg-white rounded-2xl p-4 md:p-6 shadow-lg">
-                        <!-- UPDATED SPOTIFY EMBED URL -->
-                        <iframe data-testid="embed-iframe" style="border-radius:12px" 
-                                src="https://open.spotify.com/embed/track/5bgORF1neXPXVCKkoLEdNO?utm_source=generator&si=11493c01e4a04cfa" 
-                                width="100%" height="352" frameBorder="0" 
-                                allowfullscreen="" 
-                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                                loading="lazy">
-                        </iframe>
-                    </div>
-                </div>
-            </div>
-            <div class="flex justify-center gap-6 mt-6 text-stone-300/50">
-                <span class="text-lg">♪</span><span class="text-sm mt-1">♫</span><span class="text-lg">♪</span><span class="text-sm mt-1">♫</span><span class="text-lg">♪</span>
-            </div>
-        </div>
-    </section>
+/* ---------- the cake & 18 candles ---------- */
+const stage = $('#stage');
+const candles = [];
+const CANDLE_COLORS = ['#d98d84','#e0a35c','#efe3cb'];
+let outCount = 0, cakeDone = false;
 
-    <!-- ==================== ABOUT ==================== -->
-    <section id="about" class="relative px-6 py-20 md:py-28">
-        <div class="max-w-2xl mx-auto text-center animate-fade-in-up">
-            <div class="bg-white/60 backdrop-blur-sm border border-stone-200/50 rounded-2xl p-8 md:p-12 shadow-sm relative overflow-hidden">
-                <div class="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-amber-300/50 rounded-tl-md"></div>
-                <div class="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-amber-300/50 rounded-tr-md"></div>
-                <div class="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-amber-300/50 rounded-bl-md"></div>
-                <div class="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-amber-300/50 rounded-br-md"></div>
-                <i data-lucide="quote" class="w-8 h-8 text-amber-400/40 mx-auto mb-4"></i>
-                <p class="font-serif-display text-xl md:text-2xl text-stone-700 leading-relaxed italic">
-                    Some people light up a room just by being in it. 
-                    Esther, you're one of those people — 
-                    and these photos are proof.
-                </p>
-                <div class="mt-6 flex items-center justify-center gap-2 text-stone-400">
-                    <div class="w-8 h-px bg-stone-300"></div>
-                    <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-400"></i>
-                    <div class="w-8 h-px bg-stone-300"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+function addCandle(xPct, bottom, h, color, z, back){
+  const d = document.createElement('div');
+  d.className = 'candle' + (back ? ' back' : '');
+  d.style.left = xPct + '%';
+  d.style.bottom = bottom + 'px';
+  d.style.setProperty('--h', h + 'px');
+  d.style.setProperty('--cd', color);
+  d.style.setProperty('--d', (0.16 + Math.random()*.14).toFixed(2) + 's');
+  d.style.zIndex = z;
+  d.innerHTML = '<div class="flame"></div><div class="wick"></div><div class="stick"></div><div class="smoke"></div>';
+  d.addEventListener('click', () => blowOne(d));
+  stage.appendChild(d); candles.push(d);
+}
+/* back row of 10, front row of 8 — all on top of the top tier */
+for(let i = 0; i < 10; i++) addCandle(24 + i*(52/9), 180, 38, CANDLE_COLORS[i%3], 4, true);
+for(let i = 0; i <  8; i++) addCandle(28 + i*(44/7), 170, 46, CANDLE_COLORS[(i+1)%3], 5, false);
 
-    <!-- Footer -->
-    <footer class="relative border-t border-stone-200/50 px-6 py-12">
-        <div class="max-w-6xl mx-auto text-center">
-            <div class="flex items-center justify-center gap-2 mb-4">
-                <div class="w-6 h-6 rounded-full bg-gradient-to-br from-rose-400 to-amber-400 flex items-center justify-center text-white text-[10px] font-medium">E</div>
-                <span class="font-serif-display text-lg text-stone-900">Esther</span>
-            </div>
-            <p class="text-xs text-stone-400 font-light">Made with <span class="text-rose-400">♥</span> — a little corner of the internet just for you</p>
-            <p class="text-[10px] text-stone-300 mt-2">@21ester_goddes</p>
-        </div>
-    </footer>
+function blowOne(d){
+  if(cakeDone || d.classList.contains('out')) return;
+  d.classList.add('out');
+  outCount++;
+  if(outCount === candles.length) setTimeout(celebrate, 950);
+}
+function celebrate(){
+  if(cakeDone) return; cakeDone = true;
+  stopMic();
+  $('#wishMsg').classList.add('show');
+  const r = stage.getBoundingClientRect();
+  burst(r.left + r.width/2, r.top + r.height*.35, 140);
+  setTimeout(() => burst(r.left + r.width*(.2 + Math.random()*.6), r.top + 20, 70, true), 380);
+  toast('wish locked in — happy 18th, bubs');
+}
+ $('#relight').addEventListener('click', () => {
+  candles.forEach(c => c.classList.remove('out'));
+  outCount = 0; cakeDone = false;
+  $('#wishMsg').classList.remove('show');
+  shuffleOrder();
+  toast('18 flames, back in business — wish again');
+});
 
-    <script>
-        lucide.createIcons();
+/* ---------- blow detection with the microphone ---------- */
+let audioCtx, analyser, micData, micStream, micOn = false, micRAF = 0, lastBlow = 0;
+let blowOrder = [], blowIdx = 0;
+function shuffleOrder(){
+  blowOrder = candles.map((_, i) => i).sort(() => Math.random() - .5);
+  blowIdx = 0;
+}
+shuffleOrder();
+function blowNextAlive(){
+  while(blowIdx < blowOrder.length){
+    const c = candles[blowOrder[blowIdx++]];
+    if(!c.classList.contains('out')){ blowOne(c); return; }
+  }
+}
+function stopMic(){
+  cancelAnimationFrame(micRAF);
+  if(micStream) micStream.getTracks().forEach(t => t.stop());
+  if(audioCtx) audioCtx.close().catch(()=>{});
+  micStream = audioCtx = analyser = null;
+  micOn = false;
+  $('#breathWrap').classList.remove('on');
+  $('#breathFill').style.width = '0%';
+  $('#micBtn').textContent = 'use my breath';
+}
+ $('#micBtn').addEventListener('click', async () => {
+  if(micOn){ stopMic(); toast('mic off — tapping the flames works too'); return; }
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw 0;
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}
+    });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const src = audioCtx.createMediaStreamSource(micStream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 1024;
+    micData = new Uint8Array(analyser.fftSize);
+    src.connect(analyser);
+    micOn = true;
+    $('#breathWrap').classList.add('on');
+    $('#micBtn').textContent = 'mic is listening — say when';
+    toast('take a deep breath\u2026 then blow');
+    (function micLoop(){
+      if(!micOn) return;
+      micRAF = requestAnimationFrame(micLoop);
+      analyser.getByteTimeDomainData(micData);
+      let sum = 0;
+      for(let i = 0; i < micData.length; i++){
+        const v = (micData[i] - 128) / 128;
+        sum += v * v;
+      }
+      const rms = Math.sqrt(sum / micData.length);
+      const b = Math.max(0, Math.min(1, (rms - .045) * 4));
+      $('#breathFill').style.width = (b * 100) + '%';
+      const now = performance.now();
+      if(b > .35 && now - lastBlow > 130 && !cakeDone){
+        blowNextAlive();
+        lastBlow = now;
+      }
+    })();
+  }catch(e){
+    toast("mic's shy — tap the flames instead");
+  }
+});
 
-        const photos = [
-            { url: 'https://z-cdn-media.chatglm.cn/files/ef64eb11-a6b4-4848-bc09-64623dfa0eca.png?auth_key=1883432752-1f0043a9aa1e4d608e4bc509d1b6a2f6-0-0dffa0d094638d2f8e13dcd0c8169a25', caption: 'selfie days ✨' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/214de916-6510-464d-94f9-944155dab4f0.png?auth_key=1883432752-aaf8a1d8ca534dcba5a28cb399ddde39-0-d7b8829023f89a703cd6ca216d41c7ce', caption: 'natural beauty 🤍' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/8281f46c-6298-4e34-a9a5-80e72eb0656a.png?auth_key=1883432752-1774bba955f04d80b486090c79d0137f-0-b9ef26f30d26b5c5eadb835693d07c47', caption: 'silly moments 🇺🇸' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/2bd17ed0-e3e2-4e4e-b338-621ffe212c1c.png?auth_key=1883432752-840d366fb6074f56a76e4fa51fdcb733-0-1823d0b71794d8f8919190d5c347b90c', caption: 'those locks 💫' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/6a2df981-5beb-4ef3-8d1a-b4cdad8a72eb.png?auth_key=1883432752-4f930b18c1ac415bb90f3a49ca490134-0-d723638eb77a6918f2a84c6eab792606', caption: 'playful spirit 😛' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/d2a19dea-6715-442d-87ae-21b8e399e8de.png?auth_key=1883432752-57f1505a70064b7a82335c4fc329ba0f-0-fd26826c68ee14b1023a4e725b0e591e', caption: 'so elegant 🌹' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/86dde7e5-980c-4c93-9036-87ad5d32e984.JPG?auth_key=1883433275-7fe9b745fdab42f8acd91ff144105fc2-0-c06e8589b882c6aacdc4b9b8a5d3881d', caption: 'regal vibes 💙' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/77a65d5a-b0a8-4105-b261-1280c9374555.JPG?auth_key=1883433275-b47e8c6477fb4365bd1170d39e35976f-0-4867420af977a9322c06656e354df3ef', caption: 'sporty & cute 😜' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/f3b85640-108c-4b91-8c2a-961c1f3e53e0.JPG?auth_key=1883433275-fa4889cbaf6c40588bfb26e5329df3dd-0-eca2c964e1aab1cdb90467ea31d9d31f', caption: 'outdoor chill 🌿' },
-            { url: 'https://z-cdn-media.chatglm.cn/files/09771bd5-cb27-43d6-8d84-c5cfcab81ebc.jpg?auth_key=1883433275-d4e69b0d34b24877817d9134f704b59e-0-abbb6462c1ba2e140e70786a7526cfd7', caption: 'mysterious ✌️' },
-        ];
+/* ---------- 18 reasons, one pulled note at a time ---------- */
+const REASONS = [
+  "your laugh — the real one, the snorty one",
+  "you talk to animals like they're old friends",
+  "that face you make when the food is too good",
+  "you remember the tiny things everyone else forgets",
+  "your playlists have ruined my life (in the best way)",
+  "you fall asleep mid-sentence and finish it at breakfast",
+  "the way you get excited about the little stuff",
+  "your competitive streak over absolutely nothing",
+  "you always save me the last bite (mostly)",
+  "how brave you are, even when you're scared",
+  "your terrible, wonderful puns",
+  "you dance in the kitchen like nobody's watching — I'm not watching, I'm staring",
+  "the way you say my name",
+  "you make ordinary Tuesdays feel like events",
+  "your heart — too big, honestly, mind the doorways",
+  "you believe in me louder than my doubts do",
+  "every version of you — the past ones and the ones still coming",
+  "simply: you. always you."
+];
+const ROT = [-5,3,-2,6,-6,2,-3,5,-1,4,-4,1,-5,2,6,-2,3,-3];
+let pulled = 0;
+const board = $('#notesBoard'), pullBtn = $('#pullBtn'), pullCount = $('#pullCount');
+function spawnNote(i, fin){
+  const n = document.createElement('div');
+  n.className = 'note' + (fin ? ' fin' : '');
+  n.style.setProperty('--r', ROT[i % ROT.length] + 'deg');
+  n.style.setProperty('--ty', (((i * 53) % 17) - 8) + 'px');
+  n.innerHTML = (fin ? '<b>no. 18&#189; — the fine print</b>' : '<b>no. ' + (i+1) + '</b>') +
+    (fin ? "&hellip;and about a million more. I've got time. — happy 18th, bubs" : REASONS[i]);
+  board.appendChild(n);
+  requestAnimationFrame(() => requestAnimationFrame(() => n.classList.add('in')));
+}
+pullBtn.addEventListener('click', () => {
+  if(pulled >= 18) return;
+  spawnNote(pulled, false);
+  pulled++;
+  pullCount.textContent = pulled + ' of 18 pulled';
+  if(pulled === 18){
+    setTimeout(() => {
+      spawnNote(18, true);
+      pullBtn.textContent = "that's all eighteen";
+      pullBtn.disabled = true;
+      pullCount.textContent = '\u2026and about a million more.';
+    }, 420);
+  }
+});
 
-        let currentPhotoIndex = 0;
+/* ---------- Surprise from Alokesh ---------- */
+const surpriseBtn = document.getElementById('surpriseBtn');
+const surpriseNote = document.getElementById('surpriseNote');
+let surpriseShown = false;
 
-        function openLightbox(index) {
-            currentPhotoIndex = index;
-            const lightbox = document.getElementById('lightbox');
-            const img = document.getElementById('lightbox-img');
-            const caption = document.getElementById('lightbox-caption');
-            img.src = photos[index].url;
-            caption.textContent = photos[index].caption;
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function navigateLightbox(direction) {
-            currentPhotoIndex = (currentPhotoIndex + direction + photos.length) % photos.length;
-            const img = document.getElementById('lightbox-img');
-            const caption = document.getElementById('lightbox-caption');
-            img.style.opacity = '0';
-            img.style.transform = 'scale(0.95) translateX(' + (direction * 30) + 'px)';
-            caption.style.opacity = '0';
-            setTimeout(() => {
-                img.src = photos[currentPhotoIndex].url;
-                caption.textContent = photos[currentPhotoIndex].caption;
-                img.style.transition = 'all 0.3s ease';
-                caption.style.transition = 'opacity 0.3s ease';
-                img.style.opacity = '1';
-                img.style.transform = 'scale(1) translateX(0)';
-                caption.style.opacity = '1';
-                setTimeout(() => { img.style.transition = ''; caption.style.transition = ''; }, 300);
-            }, 150);
-        }
-
-        document.addEventListener('keydown', (e) => {
-            const lb = document.getElementById('lightbox');
-            if (!lb.classList.contains('active')) return;
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') navigateLightbox(-1);
-            if (e.key === 'ArrowRight') navigateLightbox(1);
-        });
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-        document.querySelectorAll('.animate-drop-in').forEach(el => {
-            el.style.animationPlayState = 'paused';
-            observer.observe(el);
-        });
-
-        setTimeout(() => {
-            document.querySelectorAll('.animate-drop-in').forEach(el => {
-                if (el.getBoundingClientRect().top < window.innerHeight) {
-                    el.style.animationPlayState = 'running';
-                }
-            });
-        }, 100);
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    document.getElementById('mobile-menu').classList.add('hidden');
-                }
-            });
-        });
-    </script>
+surpriseBtn.addEventListener('click', () => {
+  if (surpriseShown) return;
+  surpriseShown = true;
+  surpriseNote.classList.add('show');
+  surpriseBtn.textContent = "It's a surprise, Bubs!";
+  surpriseBtn.disabled = true;
+  // Add a burst of hearts
+  const rect = surpriseNote.getBoundingClientRect();
+  burst(rect.left + rect.width/2, rect.top + rect.height/2, 40, true);
+  setTimeout(() => { surpriseBtn.textContent = "Hope it made you smile"; }, 2000);
+});
+</script>
 </body>
 </html>
